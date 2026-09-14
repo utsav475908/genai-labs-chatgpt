@@ -1,0 +1,83 @@
+# ============================================
+# MyAI - Master Python Requirements
+# ============================================
+
+# -------------------------
+# OpenAI
+# -------------------------
+openai
+
+# -------------------------
+# FastAPI Backend
+# -------------------------
+fastapi
+uvicorn[standard]
+
+# -------------------------
+# Environment Variables
+# -------------------------
+python-dotenv
+
+# -------------------------
+# File Uploads
+# -------------------------
+python-multipart
+
+# -------------------------
+# HTTP / API
+# -------------------------
+httpx
+requests
+
+# -------------------------
+# Data Validation
+# -------------------------
+pydantic
+pydantic-settings
+
+# -------------------------
+# Async / Networking
+# -------------------------
+aiohttp
+websockets
+
+# -------------------------
+# PDF / Document Processing
+# -------------------------
+pypdf
+PyMuPDF
+python-docx
+openpyxl
+
+# -------------------------
+# Image Processing
+# -------------------------
+Pillow
+
+# -------------------------
+# Audio / Voice
+# -------------------------
+soundfile
+numpy
+
+# -------------------------
+# Database
+# -------------------------
+SQLAlchemy
+aiosqlite
+
+# -------------------------
+# Authentication / Security
+# -------------------------
+PyJWT
+passlib[bcrypt]
+email-validator
+
+# -------------------------
+# Utilities
+# -------------------------
+python-dateutil
+tqdm
+
+# pwdlib[argon2]
+# python-jose[cryptography]

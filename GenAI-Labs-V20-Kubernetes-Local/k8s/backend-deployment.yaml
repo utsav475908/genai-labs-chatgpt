@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: genai-backend
+  namespace: genai-lab
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: genai-backend
+  template:
+    metadata:
+      labels:
+        app: genai-backend
+    spec:
+      containers:
+        - name: backend
+          image: genai-backend:local
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8020
+          env:
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openai-secret
+                  key: OPENAI_API_KEY
+            - name: OPENAI_MODEL
+              valueFrom:
+                configMapKeyRef:
+                  name: genai-config
+                  key: OPENAI_MODEL
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8020
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8020
+            initialDelaySeconds: 10
+            periodSeconds: 20

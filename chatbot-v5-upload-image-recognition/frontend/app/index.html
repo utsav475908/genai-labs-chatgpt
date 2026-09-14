@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GenAI-Labs V5</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"
+    >
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+
+    margin: 0;
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+    color: #222;
+
+    min-height: 100vh;
+
+    background-image:
+        linear-gradient(
+            rgba(255,255,255,0.72),
+            rgba(255,255,255,0.78)
+        ),
+        url("./genai-labs-background.png");
+
+    background-size: cover;
+
+    background-position: center;
+
+    background-attachment: fixed;
+
+}
+
+
+/* =====================================================
+   HEADER
+   ===================================================== */
+
+header {
+
+    height: 76px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 24px;
+
+    background:
+        rgba(255,255,255,0.88);
+
+    backdrop-filter: blur(14px);
+
+    -webkit-backdrop-filter: blur(14px);
+
+    border-bottom:
+        1px solid rgba(0,0,0,0.08);
+
+    position: relative;
+
+    z-index: 10;
+
+}
+
+
+.brand {
+
+    font-size: 28px;
+
+    font-weight: 700;
+
+    letter-spacing: -1px;
+
+}
+
+
+.version {
+
+    margin-left: 14px;
+
+    padding: 8px 13px;
+
+    border-radius: 12px;
+
+    background: #f0f0f0;
+
+    color: #666;
+
+    font-weight: 600;
+
+}
+
+
+/* =====================================================
+   APP
+   ===================================================== */
+
+.app {
+
+    max-width: 1100px;
+
+    margin: 0 auto;
+
+    min-height:
+        calc(100vh - 76px);
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+/* =====================================================
+   CHAT
+   ===================================================== */
+
+#chat {
+
+    flex: 1;
+
+    padding:
+        55px 20px 160px;
+
+}
+
+
+.welcome {
+
+    max-width: 980px;
+
+    margin:
+        0 auto 45px;
+
+    padding: 25px 30px;
+
+    border-radius: 20px;
+
+    background:
+        rgba(255,255,255,0.78);
+
+    backdrop-filter: blur(12px);
+
+    -webkit-backdrop-filter: blur(12px);
+
+    box-shadow:
+        0 8px 30px rgba(0,0,0,0.08);
+
+    font-size: 20px;
+
+    line-height: 1.6;
+
+}
+
+
+/* =====================================================
+   MESSAGES
+   ===================================================== */
+
+.message {
+
+    max-width: 980px;
+
+    margin:
+        0 auto 28px;
+
+}
+
+
+.user-message {
+
+    background:
+        rgba(240,240,240,0.94);
+
+    padding:
+        18px 24px;
+
+    border-radius: 20px;
+
+    font-size: 18px;
+
+    line-height: 1.5;
+
+    box-shadow:
+        0 3px 15px rgba(0,0,0,0.05);
+
+}
+
+
+.assistant-message {
+
+    padding:
+        12px 8px;
+
+    font-size: 18px;
+
+    line-height: 1.65;
+
+}
+
+
+.assistant-message p {
+
+    margin-top: 0;
+
+    margin-bottom: 18px;
+
+}
+
+
+.assistant-message pre {
+
+    background:
+        rgba(246,246,246,0.95);
+
+    padding: 18px;
+
+    border-radius: 12px;
+
+    overflow-x: auto;
+
+}
+
+
+/* =====================================================
+   STATUS
+   ===================================================== */
+
+.search-status {
+
+    font-size: 14px;
+
+    color: #666;
+
+    margin-bottom: 10px;
+
+}
+
+
+/* =====================================================
+   COMPOSER
+   ===================================================== */
+
+.composer-container {
+
+    position: fixed;
+
+    bottom: 22px;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    width:
+        min(980px, calc(100% - 40px));
+
+    z-index: 100;
+
+}
+
+
+/* =====================================================
+   FILE PREVIEW
+   ===================================================== */
+
+.file-preview {
+
+    max-width: 980px;
+
+    margin:
+        0 auto 10px;
+
+    padding:
+        10px 14px;
+
+    display: none;
+
+    align-items: center;
+
+    gap: 12px;
+
+    background:
+        rgba(255,255,255,0.92);
+
+    backdrop-filter: blur(15px);
+
+    -webkit-backdrop-filter: blur(15px);
+
+    border:
+        1px solid rgba(0,0,0,0.08);
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 5px 20px rgba(0,0,0,0.10);
+
+}
+
+
+.file-preview img {
+
+    width: 70px;
+
+    height: 55px;
+
+    object-fit: contain;
+
+    border-radius: 8px;
+
+    background: white;
+
+    border: 1px solid #ddd;
+
+}
+
+
+.file-info {
+
+    flex: 1;
+
+    min-width: 0;
+
+}
+
+
+.file-name {
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+}
+
+
+.file-status {
+
+    font-size: 13px;
+
+    color: #777;
+
+    margin-top: 3px;
+
+}
+
+
+.remove-file {
+
+    width: 34px;
+
+    height: 34px;
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    color: #777;
+
+    font-size: 20px;
+
+}
+
+
+.remove-file:hover {
+
+    background: #ddd;
+
+}
+
+
+/* =====================================================
+   INPUT
+   ===================================================== */
+
+.composer {
+
+    background:
+        rgba(255,255,255,0.94);
+
+    backdrop-filter: blur(18px);
+
+    -webkit-backdrop-filter: blur(18px);
+
+    border:
+        1px solid rgba(0,0,0,0.12);
+
+    border-radius: 22px;
+
+    padding:
+        10px 12px;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    gap: 10px;
+
+    box-shadow:
+        0 8px 35px rgba(0,0,0,0.16);
+
+}
+
+
+textarea {
+
+    flex: 1;
+
+    resize: none;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    font-size: 17px;
+
+    line-height: 1.5;
+
+    min-height: 30px;
+
+    max-height: 180px;
+
+    font-family: inherit;
+
+}
+
+
+#fileInput {
+
+    display: none;
+
+}
+
+
+/* =====================================================
+   ATTACH BUTTON
+   ===================================================== */
+
+.attach-button {
+
+    width: 42px;
+
+    height: 42px;
+
+    border-radius: 50%;
+
+    border: none;
+
+    background: #f0f0f0;
+
+    font-size: 24px;
+
+    cursor: pointer;
+
+}
+
+
+.attach-button:hover {
+
+    background: #ddd;
+
+}
+
+
+/* =====================================================
+   SEND BUTTON
+   ===================================================== */
+
+.send-button {
+
+    width: 42px;
+
+    height: 42px;
+
+    border-radius: 50%;
+
+    border: none;
+
+    background: #111;
+
+    color: white;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+}
+
+
+.send-button:hover {
+
+    background: #333;
+
+}
+
+
+.send-button:disabled {
+
+    background: #aaa;
+
+    cursor: not-allowed;
+
+}
+
+
+/* =====================================================
+   NEW CHAT
+   ===================================================== */
+
+.new-chat {
+
+    position: fixed;
+
+    right: 25px;
+
+    top: 95px;
+
+    padding:
+        10px 15px;
+
+    background:
+        rgba(255,255,255,0.9);
+
+    backdrop-filter: blur(10px);
+
+    border: none;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    z-index: 20;
+
+    box-shadow:
+        0 4px 15px rgba(0,0,0,0.08);
+
+}
+
+
+.new-chat:hover {
+
+    background: white;
+
+}
+
+
+/* =====================================================
+   COPY
+   ===================================================== */
+
+.copy-button {
+
+    background: #e9e9e9;
+
+    padding:
+        6px 10px;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+
+    margin-top: 6px;
+
+    border: none;
+
+    cursor: pointer;
+
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 700px) {
+
+    header {
+
+        padding: 0 15px;
+
+    }
+
+    .brand {
+
+        font-size: 23px;
+
+    }
+
+    #chat {
+
+        padding:
+            35px 12px 150px;
+
+    }
+
+    .composer-container {
+
+        bottom: 10px;
+
+        width:
+            calc(100% - 20px);
+
+    }
+
+    .new-chat {
+
+        display: none;
+
+    }
+
+    .welcome {
+
+        font-size: 17px;
+
+        padding: 20px;
+
+    }
+
+    .assistant-message,
+    .user-message {
+
+        font-size: 16px;
+
+    }
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="brand">
+        GenAI-Labs
+    </div>
+
+    <div class="version">
+        V5
+    </div>
+
+</header>
+
+
+<button
+    class="new-chat"
+    id="newChatButton"
+>
+    New Chat
+</button>
+
+
+<div class="app">
+
+    <main id="chat">
+
+        <div class="welcome">
+
+            Hello! I'm
+            <strong>GenAI-Labs V5</strong>.
+
+            You can chat normally,
+            search the web,
+            upload documents,
+            or upload an image and ask me about it.
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- =====================================================
+     COMPOSER
+     ===================================================== -->
+
+<div class="composer-container">
+
+
+    <!-- FILE PREVIEW -->
+
+    <div
+        class="file-preview"
+        id="filePreview"
+    >
+
+        <div id="imagePreviewContainer"></div>
+
+        <div class="file-info">
+
+            <div
+                class="file-name"
+                id="fileName"
+            ></div>
+
+            <div
+                class="file-status"
+                id="fileStatus"
+            ></div>
+
+        </div>
+
+
+        <button
+            class="remove-file"
+            id="removeFileButton"
+        >
+            ×
+        </button>
+
+    </div>
+
+
+    <div class="composer">
+
+
+        <!-- SINGLE FILE PICKER -->
+
+        <input
+            type="file"
+            id="fileInput"
+            accept="
+                image/jpeg,
+                image/png,
+                image/webp,
+                image/gif,
+                .pdf,
+                .doc,
+                .docx,
+                .txt,
+                .md,
+                .csv,
+                .json
+            "
+        >
+
+
+        <!-- PAPERCLIP -->
+
+        <button
+            type="button"
+            class="attach-button"
+            id="attachButton"
+            title="Attach image or document"
+        >
+            📎
+        </button>
+
+
+        <!-- MESSAGE -->
+
+        <textarea
+            id="messageInput"
+            placeholder="Message GenAI-Labs..."
+            rows="1"
+        ></textarea>
+
+
+        <!-- SEND -->
+
+        <button
+            type="button"
+            class="send-button"
+            id="sendButton"
+        >
+            ↑
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+
+/* =====================================================
+   API
+   ===================================================== */
+
+const API_URL =
+    "http://localhost:8005/chat";
+
+const IMAGE_UPLOAD_URL =
+    "http://localhost:8005/upload-image";
+
+const DOCUMENT_UPLOAD_URL =
+    "http://localhost:8005/upload";
+
+
+/* =====================================================
+   STATE
+   ===================================================== */
+
+let selectedFile = null;
+
+let imageFileId = null;
+
+let vectorStoreId = null;
+
+let messages = [];
+
+let abortController = null;
+
+
+/* =====================================================
+   ELEMENTS
+   ===================================================== */
+
+const chat =
+    document.getElementById("chat");
+
+const messageInput =
+    document.getElementById("messageInput");
+
+const sendButton =
+    document.getElementById("sendButton");
+
+const attachButton =
+    document.getElementById("attachButton");
+
+const fileInput =
+    document.getElementById("fileInput");
+
+const filePreview =
+    document.getElementById("filePreview");
+
+const fileName =
+    document.getElementById("fileName");
+
+const fileStatus =
+    document.getElementById("fileStatus");
+
+const imagePreviewContainer =
+    document.getElementById(
+        "imagePreviewContainer"
+    );
+
+const removeFileButton =
+    document.getElementById(
+        "removeFileButton"
+    );
+
+const newChatButton =
+    document.getElementById(
+        "newChatButton"
+    );
+
+
+/* =====================================================
+   OPEN FILE PICKER
+   NO PROMPT
+   ===================================================== */
+
+attachButton.addEventListener(
+    "click",
+    () => {
+
+        fileInput.value = "";
+
+        fileInput.click();
+
+    }
+);
+
+
+/* =====================================================
+   FILE SELECTION
+   AUTOMATIC DETECTION
+   ===================================================== */
+
+fileInput.addEventListener(
+    "change",
+    async () => {
+
+        const file =
+            fileInput.files[0];
+
+        if (!file) return;
+
+
+        selectedFile = file;
+
+        imageFileId = null;
+
+        vectorStoreId = null;
+
+
+        showFilePreview(file);
+
+
+        if (
+            file.type.startsWith("image/")
+        ) {
+
+            await handleImage(file);
+
+        } else {
+
+            await handleDocument(file);
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   PREVIEW
+   ===================================================== */
+
+function showFilePreview(file) {
+
+    filePreview.style.display =
+        "flex";
+
+    fileName.textContent =
+        file.name;
+
+    fileStatus.textContent =
+        "Uploading...";
+
+    imagePreviewContainer.innerHTML =
+        "";
+
+
+    if (
+        file.type.startsWith("image/")
+    ) {
+
+        const img =
+            document.createElement("img");
+
+        img.src =
+            URL.createObjectURL(file);
+
+        img.alt =
+            file.name;
+
+        imagePreviewContainer
+            .appendChild(img);
+
+    }
+
+}
+
+
+/* =====================================================
+   IMAGE UPLOAD
+   ===================================================== */
+
+async function handleImage(file) {
+
+    try {
+
+        fileStatus.textContent =
+            "Uploading image...";
+
+
+        const formData =
+            new FormData();
+
+        formData.append(
+            "file",
+            file
+        );
+
+
+        const response =
+            await fetch(
+                IMAGE_UPLOAD_URL,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.detail ||
+                "Image upload failed"
+            );
+
+        }
+
+
+        imageFileId =
+            data.file_id;
+
+        vectorStoreId = null;
+
+
+        fileStatus.textContent =
+            "Ready for image analysis";
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        fileStatus.textContent =
+            "Image upload failed";
+
+        alert(
+            "Image upload failed: " +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   DOCUMENT UPLOAD
+   ===================================================== */
+
+async function handleDocument(file) {
+
+    try {
+
+        fileStatus.textContent =
+            "Uploading document...";
+
+
+        const formData =
+            new FormData();
+
+        formData.append(
+            "file",
+            file
+        );
+
+
+        const response =
+            await fetch(
+                DOCUMENT_UPLOAD_URL,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.detail ||
+                "Document upload failed"
+            );
+
+        }
+
+
+        vectorStoreId =
+            data.vector_store_id;
+
+        imageFileId = null;
+
+
+        fileStatus.textContent =
+            "Ready for questions";
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        fileStatus.textContent =
+            "Document upload failed";
+
+        alert(
+            "Document upload failed: " +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   REMOVE FILE
+   ===================================================== */
+
+removeFileButton.addEventListener(
+    "click",
+    () => {
+
+        selectedFile = null;
+
+        imageFileId = null;
+
+        vectorStoreId = null;
+
+        fileInput.value = "";
+
+        filePreview.style.display =
+            "none";
+
+        imagePreviewContainer.innerHTML =
+            "";
+
+        fileName.textContent = "";
+
+        fileStatus.textContent = "";
+
+    }
+);
+
+
+/* =====================================================
+   TEXTAREA
+   ===================================================== */
+
+messageInput.addEventListener(
+    "input",
+    () => {
+
+        messageInput.style.height =
+            "auto";
+
+        messageInput.style.height =
+            Math.min(
+                messageInput.scrollHeight,
+                180
+            ) + "px";
+
+    }
+);
+
+
+/* =====================================================
+   ENTER SEND
+   ===================================================== */
+
+messageInput.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
+
+            event.preventDefault();
+
+            sendMessage();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   SEND
+   ===================================================== */
+
+sendButton.addEventListener(
+    "click",
+    sendMessage
+);
+
+
+/* =====================================================
+   USER MESSAGE
+   ===================================================== */
+
+function addUserMessage(text) {
+
+    const wrapper =
+        document.createElement("div");
+
+    wrapper.className =
+        "message";
+
+
+    const bubble =
+        document.createElement("div");
+
+    bubble.className =
+        "user-message";
+
+    bubble.textContent =
+        text;
+
+
+    wrapper.appendChild(bubble);
+
+    chat.appendChild(wrapper);
+
+    scrollToBottom();
+
+}
+
+
+/* =====================================================
+   ASSISTANT MESSAGE
+   ===================================================== */
+
+function createAssistantMessage() {
+
+    const wrapper =
+        document.createElement("div");
+
+    wrapper.className =
+        "message";
+
+
+    const content =
+        document.createElement("div");
+
+    content.className =
+        "assistant-message";
+
+
+    wrapper.appendChild(content);
+
+    chat.appendChild(wrapper);
+
+
+    return content;
+
+}
+
+
+/* =====================================================
+   SEND MESSAGE
+   ===================================================== */
+
+async function sendMessage() {
+
+    const text =
+        messageInput.value.trim();
+
+
+    if (!text) return;
+
+
+    if (
+        selectedFile &&
+        !imageFileId &&
+        !vectorStoreId
+    ) {
+
+        alert(
+            "Please wait for the file upload to finish."
+        );
+
+        return;
+
+    }
+
+
+    addUserMessage(text);
+
+
+    messages.push({
+        role: "user",
+        content: text
+    });
+
+
+    messageInput.value = "";
+
+    messageInput.style.height =
+        "auto";
+
+
+    const assistantContent =
+        createAssistantMessage();
+
+
+    sendButton.disabled =
+        true;
+
+
+    abortController =
+        new AbortController();
+
+
+    try {
+
+
+        const body = {
+
+            messages: messages
+
+        };
+
+
+        if (imageFileId) {
+
+            body.image_file_id =
+                imageFileId;
+
+        }
+
+
+        if (vectorStoreId) {
+
+            body.vector_store_id =
+                vectorStoreId;
+
+        }
+
+
+        const response =
+            await fetch(
+                API_URL,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(body),
+
+                    signal:
+                        abortController.signal
+                }
+            );
+
+
+        if (!response.ok) {
+
+            const errorText =
+                await response.text();
+
+            throw new Error(
+                errorText ||
+                "Chat request failed"
+            );
+
+        }
+
+
+        const reader =
+            response.body.getReader();
+
+        const decoder =
+            new TextDecoder();
+
+
+        let buffer = "";
+
+        let assistantText = "";
+
+
+        while (true) {
+
+            const {
+                value,
+                done
+            } =
+                await reader.read();
+
+
+            if (done) break;
+
+
+            buffer +=
+                decoder.decode(
+                    value,
+                    {
+                        stream: true
+                    }
+                );
+
+
+            const parts =
+                buffer.split("\n\n");
+
+            buffer =
+                parts.pop();
+
+
+            for (
+                const part of parts
+            ) {
+
+                const line =
+                    part
+                        .split("\n")
+                        .find(
+                            line =>
+                                line.startsWith(
+                                    "data:"
+                                )
+                        );
+
+
+                if (!line) continue;
+
+
+                const jsonString =
+                    line
+                        .replace(
+                            /^data:\s*/,
+                            ""
+                        )
+                        .trim();
+
+
+                if (!jsonString) continue;
+
+
+                try {
+
+                    const data =
+                        JSON.parse(
+                            jsonString
+                        );
+
+
+                    if (
+                        data.type ===
+                        "delta"
+                    ) {
+
+                        assistantText +=
+                            data.text || "";
+
+
+                        assistantContent.innerHTML =
+                            marked.parse(
+                                assistantText
+                            );
+
+
+                        highlightCode();
+
+                        scrollToBottom();
+
+                    }
+
+
+                    else if (
+                        data.type ===
+                        "searching"
+                    ) {
+
+                        showStatus(
+                            assistantContent,
+                            "🔎 Searching the web..."
+                        );
+
+                    }
+
+
+                    else if (
+                        data.type ===
+                        "search_completed"
+                    ) {
+
+                        removeStatus(
+                            assistantContent
+                        );
+
+                    }
+
+
+                    else if (
+                        data.type ===
+                        "file_searching"
+                    ) {
+
+                        showStatus(
+                            assistantContent,
+                            "📄 Searching your document..."
+                        );
+
+                    }
+
+
+                    else if (
+                        data.type ===
+                        "file_search_completed"
+                    ) {
+
+                        removeStatus(
+                            assistantContent
+                        );
+
+                    }
+
+
+                    else if (
+                        data.type ===
+                        "error"
+                    ) {
+
+                        assistantContent.innerHTML =
+                            `<p><strong>Error:</strong> ${
+                                escapeHtml(
+                                    data.message
+                                )
+                            }</p>`;
+
+                    }
+
+
+                } catch (error) {
+
+                    console.error(
+                        "SSE error:",
+                        error
+                    );
+
+                }
+
+            }
+
+        }
+
+
+        if (assistantText) {
+
+            messages.push({
+
+                role: "assistant",
+
+                content:
+                    assistantText
+
+            });
+
+        }
+
+
+    } catch (error) {
+
+
+        if (
+            error.name ===
+            "AbortError"
+        ) {
+
+            assistantContent.innerHTML +=
+                "<p><em>Generation stopped.</em></p>";
+
+        } else {
+
+            assistantContent.innerHTML =
+                `<p><strong>Error:</strong> ${
+                    escapeHtml(
+                        error.message
+                    )
+                }</p>`;
+
+        }
+
+
+    } finally {
+
+        sendButton.disabled =
+            false;
+
+        abortController =
+            null;
+
+        highlightCode();
+
+        scrollToBottom();
+
+    }
+
+}
+
+
+/* =====================================================
+   STATUS
+   ===================================================== */
+
+function showStatus(
+    container,
+    text
+) {
+
+    removeStatus(container);
+
+
+    const status =
+        document.createElement("div");
+
+    status.className =
+        "search-status";
+
+    status.textContent =
+        text;
+
+
+    container.prepend(status);
+
+}
+
+
+function removeStatus(container) {
+
+    const status =
+        container.querySelector(
+            ".search-status"
+        );
+
+
+    if (status) {
+
+        status.remove();
+
+    }
+
+}
+
+
+/* =====================================================
+   CODE HIGHLIGHT
+   ===================================================== */
+
+function highlightCode() {
+
+    document
+        .querySelectorAll(
+            "pre code"
+        )
+        .forEach(
+            block => {
+
+                hljs.highlightElement(
+                    block
+                );
+
+
+                if (
+                    !block.parentElement
+                        .querySelector(
+                            ".copy-button"
+                        )
+                ) {
+
+                    const button =
+                        document.createElement(
+                            "button"
+                        );
+
+
+                    button.className =
+                        "copy-button";
+
+                    button.textContent =
+                        "Copy";
+
+
+                    button.onclick =
+                        async () => {
+
+                            await navigator
+                                .clipboard
+                                .writeText(
+                                    block.innerText
+                                );
+
+
+                            button.textContent =
+                                "Copied";
+
+
+                            setTimeout(
+                                () => {
+
+                                    button.textContent =
+                                        "Copy";
+
+                                },
+                                1500
+                            );
+
+                        };
+
+
+                    block.parentElement
+                        .appendChild(
+                            button
+                        );
+
+                }
+
+            }
+        );
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+   ===================================================== */
+
+function escapeHtml(text) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+    div.textContent =
+        text;
+
+    return div.innerHTML;
+
+}
+
+
+/* =====================================================
+   SCROLL
+   ===================================================== */
+
+function scrollToBottom() {
+
+    window.scrollTo({
+
+        top:
+            document.body.scrollHeight,
+
+        behavior:
+            "smooth"
+
+    });
+
+}
+
+
+/* =====================================================
+   NEW CHAT
+   ===================================================== */
+
+newChatButton.addEventListener(
+    "click",
+    () => {
+
+        messages = [];
+
+        selectedFile = null;
+
+        imageFileId = null;
+
+        vectorStoreId = null;
+
+        fileInput.value = "";
+
+        filePreview.style.display =
+            "none";
+
+        imagePreviewContainer.innerHTML =
+            "";
+
+        fileName.textContent = "";
+
+        fileStatus.textContent = "";
+
+
+        chat.innerHTML = `
+
+            <div class="welcome">
+
+                Hello! I'm
+                <strong>GenAI-Labs V5</strong>.
+
+                You can chat normally,
+                search the web,
+                upload documents,
+                or upload an image
+                and ask me about it.
+
+            </div>
+
+        `;
+
+
+        messageInput.focus();
+
+    }
+);
+
+
+</script>
+
+</body>
+</html>

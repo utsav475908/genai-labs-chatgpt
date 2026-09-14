@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GenAI-Labs V4</title>
+
+    <!-- Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- Highlight.js -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github.min.css"
+    >
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/highlight.min.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                         Roboto, Helvetica, Arial, sans-serif;
+            background: white;
+            color: #222;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 320px;
+            background: #f7f7f8;
+            border-right: 1px solid #ddd;
+            padding: 22px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 28px;
+        }
+
+        .new-chat {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 12px;
+            font-size: 17px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .new-chat:hover {
+            background: #f0f0f0;
+        }
+
+        .chat-list {
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .chat-item {
+            padding: 13px 12px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-item:hover {
+            background: #e8e8e8;
+        }
+
+        .chat-item.active {
+            background: #dedede;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .header {
+            height: 72px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            padding: 0 26px;
+            font-size: 23px;
+            font-weight: 700;
+        }
+
+        .version {
+            font-size: 15px;
+            background: #eee;
+            padding: 7px 11px;
+            border-radius: 9px;
+            margin-left: 10px;
+            color: #666;
+        }
+
+        /* =========================
+           MESSAGES
+        ========================= */
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px 7%;
+        }
+
+        .message {
+            max-width: 900px;
+            margin: 0 auto 24px auto;
+            line-height: 1.6;
+            font-size: 17px;
+        }
+
+        .user-message {
+            background: #f0f0f0;
+            padding: 16px 20px;
+            border-radius: 18px;
+            margin-left: auto;
+            max-width: 75%;
+        }
+
+        .assistant-message {
+            padding: 5px 0;
+        }
+
+        .assistant-message pre {
+            background: #f6f6f6;
+            padding: 16px;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+
+        .assistant-message code {
+            font-family: SFMono-Regular, Consolas, monospace;
+        }
+
+        /* =========================
+           SEARCH STATUS
+        ========================= */
+
+        .search-status {
+            max-width: 900px;
+            margin: 0 auto 15px auto;
+            padding: 12px 18px;
+            background: #f7f7f7;
+            border-radius: 10px;
+            color: #555;
+            display: none;
+        }
+
+        /* =========================
+           UPLOAD STATUS
+        ========================= */
+
+        .upload-status {
+            max-width: 900px;
+            margin: 0 auto 12px auto;
+            padding: 10px 15px;
+            border-radius: 9px;
+            background: #f5f5f5;
+            display: none;
+            font-size: 14px;
+        }
+
+        /* =========================
+           COMPOSER
+        ========================= */
+
+        .composer-area {
+            border-top: 1px solid #eee;
+            padding: 18px 7% 12px;
+        }
+
+        .composer {
+            max-width: 900px;
+            margin: auto;
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            border: 1px solid #bbb;
+            border-radius: 15px;
+            padding: 8px;
+            background: white;
+        }
+
+        .attach-button {
+            width: 46px;
+            height: 46px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            font-size: 25px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .attach-button:hover {
+            background: #f0f0f0;
+        }
+
+        textarea {
+            flex: 1;
+            border: none;
+            outline: none;
+            resize: none;
+            font-family: inherit;
+            font-size: 17px;
+            line-height: 1.4;
+            min-height: 46px;
+            max-height: 180px;
+            padding: 10px 5px;
+        }
+
+        .send-button {
+            width: 46px;
+            height: 46px;
+            border: none;
+            background: #222;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .send-button:hover {
+            background: #444;
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .file-name {
+            max-width: 900px;
+            margin: 8px auto 0 auto;
+            font-size: 13px;
+            color: #666;
+            display: none;
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+            padding: 4px 0;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            .sidebar {
+                width: 230px;
+            }
+
+            .brand {
+                font-size: 22px;
+            }
+
+            .messages {
+                padding: 20px;
+            }
+
+            .composer-area {
+                padding: 12px;
+            }
+
+            .user-message {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- =========================
+         SIDEBAR
+    ========================= -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            GenAI-Labs
+        </div>
+
+        <button class="new-chat" id="newChatBtn">
+            + New Chat
+        </button>
+
+        <div class="chat-list" id="chatList"></div>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN
+    ========================= -->
+
+    <main class="main">
+
+        <header class="header">
+            GenAI-Labs
+            <span class="version">V4</span>
+        </header>
+
+
+        <!-- Messages -->
+
+        <div class="messages" id="messages">
+        </div>
+
+
+        <!-- Search status -->
+
+        <div class="search-status" id="searchStatus">
+            ● Searching the web...
+        </div>
+
+
+        <!-- Upload status -->
+
+        <div class="upload-status" id="uploadStatus">
+        </div>
+
+
+        <!-- Composer -->
+
+        <div class="composer-area">
+
+            <div class="composer">
+
+                <!-- Hidden file input -->
+
+                <input
+                    type="file"
+                    id="fileInput"
+                    accept=".pdf,.doc,.docx,.txt,.md"
+                    style="display:none"
+                >
+
+                <!-- Upload button -->
+
+                <button
+                    class="attach-button"
+                    id="attachButton"
+                    title="Upload document"
+                >
+                    📎
+                </button>
+
+
+                <!-- Message box -->
+
+                <textarea
+                    id="messageInput"
+                    placeholder="Message GenAI-Labs..."
+                    rows="1"
+                ></textarea>
+
+
+                <!-- Send -->
+
+                <button
+                    class="send-button"
+                    id="sendButton"
+                >
+                    ↑
+                </button>
+
+            </div>
+
+
+            <!-- Selected file -->
+
+            <div class="file-name" id="fileName"></div>
+
+
+            <div class="footer-note">
+                GenAI-Labs V4 can search the web and answer questions
+                from uploaded documents.
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    /* =========================================
+       CONFIGURATION
+    ========================================= */
+
+    const API_URL = "http://localhost:8004/chat";
+    const UPLOAD_URL = "http://localhost:8004/upload";
+
+
+    /* =========================================
+       STATE
+    ========================================= */
+
+    let currentMessages = [];
+
+    let currentVectorStoreId = null;
+
+    let selectedFile = null;
+
+    let isGenerating = false;
+
+
+    /* =========================================
+       ELEMENTS
+    ========================================= */
+
+    const messagesEl =
+        document.getElementById("messages");
+
+    const messageInput =
+        document.getElementById("messageInput");
+
+    const sendButton =
+        document.getElementById("sendButton");
+
+    const attachButton =
+        document.getElementById("attachButton");
+
+    const fileInput =
+        document.getElementById("fileInput");
+
+    const fileName =
+        document.getElementById("fileName");
+
+    const uploadStatus =
+        document.getElementById("uploadStatus");
+
+    const searchStatus =
+        document.getElementById("searchStatus");
+
+    const newChatBtn =
+        document.getElementById("newChatBtn");
+
+    const chatList =
+        document.getElementById("chatList");
+
+
+    /* =========================================
+       NEW CHAT
+    ========================================= */
+
+    newChatBtn.addEventListener("click", () => {
+
+        currentMessages = [];
+
+        currentVectorStoreId = null;
+
+        selectedFile = null;
+
+        messagesEl.innerHTML = "";
+
+        fileName.style.display = "none";
+
+        fileName.textContent = "";
+
+        uploadStatus.style.display = "none";
+
+        messageInput.value = "";
+
+        autoResize();
+
+    });
+
+
+    /* =========================================
+       FILE BUTTON
+    ========================================= */
+
+    attachButton.addEventListener("click", () => {
+
+        fileInput.click();
+
+    });
+
+
+    /* =========================================
+       FILE SELECTED
+    ========================================= */
+
+    fileInput.addEventListener("change", async () => {
+
+        const file = fileInput.files[0];
+
+        if (!file) {
+            return;
+        }
+
+        selectedFile = file;
+
+        fileName.textContent =
+            "📄 " + file.name;
+
+        fileName.style.display = "block";
+
+        await uploadFile(file);
+
+    });
+
+
+    /* =========================================
+       UPLOAD FILE
+    ========================================= */
+
+    async function uploadFile(file) {
+
+        uploadStatus.style.display = "block";
+
+        uploadStatus.textContent =
+            "Uploading " + file.name + "...";
+
+        try {
+
+            const formData = new FormData();
+
+            formData.append("file", file);
+
+
+            const response = await fetch(
+                UPLOAD_URL,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+            if (!response.ok) {
+
+                const errorText =
+                    await response.text();
+
+                throw new Error(errorText);
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            /*
+             * Backend should return:
+             *
+             * {
+             *   "vector_store_id": "vs_..."
+             * }
+             */
+
+            currentVectorStoreId =
+                data.vector_store_id;
+
+
+            if (!currentVectorStoreId) {
+
+                throw new Error(
+                    "Upload succeeded but no vector_store_id was returned."
+                );
+
+            }
+
+
+            uploadStatus.textContent =
+                "✓ " + file.name +
+                " uploaded successfully. You can now ask questions about it.";
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+            uploadStatus.textContent =
+                "❌ Upload failed: " +
+                error.message;
+
+            currentVectorStoreId = null;
+
+        }
+
+    }
+
+
+    /* =========================================
+       SEND MESSAGE
+    ========================================= */
+
+    sendButton.addEventListener("click", sendMessage);
+
+
+    messageInput.addEventListener("keydown", (event) => {
+
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
+
+            event.preventDefault();
+
+            sendMessage();
+
+        }
+
+    });
+
+
+    /* =========================================
+       SEND
+    ========================================= */
+
+    async function sendMessage() {
+
+        if (isGenerating) {
+            return;
+        }
+
+        const text =
+            messageInput.value.trim();
+
+
+        if (!text) {
+            return;
+        }
+
+
+        /* User message */
+
+        currentMessages.push({
+            role: "user",
+            content: text
+        });
+
+
+        addMessage(
+            "user",
+            text
+        );
+
+
+        messageInput.value = "";
+
+        autoResize();
+
+
+        /* Assistant message */
+
+        const assistantElement =
+            addMessage(
+                "assistant",
+                ""
+            );
+
+
+        isGenerating = true;
+
+        sendButton.disabled = true;
+
+
+        searchStatus.style.display =
+            "none";
+
+
+        try {
+
+            const requestBody = {
+
+                messages:
+                    currentMessages
+
+            };
+
+
+            /*
+             * If a PDF/document was uploaded,
+             * send its vector store ID.
+             */
+
+            if (currentVectorStoreId) {
+
+                requestBody.vector_store_id =
+                    currentVectorStoreId;
+
+            }
+
+
+            const response =
+                await fetch(
+                    API_URL,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                requestBody
+                            )
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const errorText =
+                    await response.text();
+
+                throw new Error(errorText);
+
+            }
+
+
+            const reader =
+                response.body.getReader();
+
+            const decoder =
+                new TextDecoder();
+
+            let buffer = "";
+
+            let assistantText = "";
+
+
+            while (true) {
+
+                const {
+                    value,
+                    done
+                } =
+                    await reader.read();
+
+
+                if (done) {
+                    break;
+                }
+
+
+                buffer +=
+                    decoder.decode(
+                        value,
+                        {
+                            stream: true
+                        }
+                    );
+
+
+                const lines =
+                    buffer.split("\n");
+
+
+                buffer =
+                    lines.pop();
+
+
+                for (
+                    const line of lines
+                ) {
+
+                    if (
+                        !line.startsWith("data:")
+                    ) {
+                        continue;
+                    }
+
+
+                    const data =
+                        line
+                            .slice(5)
+                            .trim();
+
+
+                    if (!data) {
+                        continue;
+                    }
+
+
+                    try {
+
+                        const event =
+                            JSON.parse(data);
+
+
+                        /* Text */
+
+                        if (
+                            event.type ===
+                            "delta"
+                        ) {
+
+                            assistantText +=
+                                event.text;
+
+
+                            assistantElement.innerHTML =
+                                marked.parse(
+                                    assistantText
+                                );
+
+
+                            highlightCode();
+
+
+                            messagesEl.scrollTop =
+                                messagesEl.scrollHeight;
+
+                        }
+
+
+                        /* Web Search */
+
+                        else if (
+                            event.type ===
+                            "searching"
+                        ) {
+
+                            searchStatus.style.display =
+                                "block";
+
+                        }
+
+
+                        /* Done */
+
+                        else if (
+                            event.type ===
+                            "done"
+                        ) {
+
+                            searchStatus.style.display =
+                                "none";
+
+                        }
+
+
+                        /* Error */
+
+                        else if (
+                            event.type ===
+                            "error"
+                        ) {
+
+                            throw new Error(
+                                event.message ||
+                                "Unknown server error"
+                            );
+
+                        }
+
+                    }
+                    catch (jsonError) {
+
+                        console.error(
+                            "Stream event error:",
+                            jsonError
+                        );
+
+                    }
+
+                }
+
+            }
+
+
+            /*
+             * Save assistant response
+             */
+
+            currentMessages.push({
+
+                role: "assistant",
+
+                content:
+                    assistantText
+
+            });
+
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+            assistantElement.innerHTML =
+                "<strong>Error:</strong> " +
+                escapeHtml(
+                    error.message
+                );
+
+        }
+        finally {
+
+            isGenerating = false;
+
+            sendButton.disabled = false;
+
+            searchStatus.style.display =
+                "none";
+
+        }
+
+    }
+
+
+    /* =========================================
+       ADD MESSAGE
+    ========================================= */
+
+    function addMessage(
+        role,
+        text
+    ) {
+
+        const message =
+            document.createElement(
+                "div"
+            );
+
+
+        message.className =
+            "message " +
+            (
+                role === "user"
+                    ? "user-message"
+                    : "assistant-message"
+            );
+
+
+        if (role === "user") {
+
+            message.textContent =
+                text;
+
+        }
+        else {
+
+            message.innerHTML =
+                text
+                    ? marked.parse(text)
+                    : "";
+
+        }
+
+
+        messagesEl.appendChild(
+            message
+        );
+
+
+        messagesEl.scrollTop =
+            messagesEl.scrollHeight;
+
+
+        return message;
+
+    }
+
+
+    /* =========================================
+       CODE HIGHLIGHTING
+    ========================================= */
+
+    function highlightCode() {
+
+        document
+            .querySelectorAll(
+                "pre code"
+            )
+            .forEach(
+                block => {
+
+                    try {
+
+                        hljs.highlightElement(
+                            block
+                        );
+
+                    }
+                    catch (error) {
+
+                        console.error(error);
+
+                    }
+
+                }
+            );
+
+    }
+
+
+    /* =========================================
+       AUTO RESIZE
+    ========================================= */
+
+    messageInput.addEventListener(
+        "input",
+        autoResize
+    );
+
+
+    function autoResize() {
+
+        messageInput.style.height =
+            "auto";
+
+        messageInput.style.height =
+            Math.min(
+                messageInput.scrollHeight,
+                180
+            ) + "px";
+
+    }
+
+
+    /* =========================================
+       ESCAPE HTML
+    ========================================= */
+
+    function escapeHtml(text) {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+        div.textContent =
+            text;
+
+        return div.innerHTML;
+
+    }
+
+
+    /* =========================================
+       INITIAL CHAT
+    ========================================= */
+
+    addMessage(
+        "assistant",
+        "Hello! I’m **GenAI-Labs V4**. You can search the web or upload a document and ask questions about it."
+    );
+
+</script>
+
+</body>
+</html>

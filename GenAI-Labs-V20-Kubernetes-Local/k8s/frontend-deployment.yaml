@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: genai-frontend
+  namespace: genai-lab
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: genai-frontend
+  template:
+    metadata:
+      labels:
+        app: genai-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: genai-frontend:local
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3020

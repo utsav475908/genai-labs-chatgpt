@@ -1,0 +1,8 @@
+.env
+__pycache__/
+*.pyc
+node_modules/
+.next/
+usage.db
+k8s/secret.yaml
+.DS_Store
