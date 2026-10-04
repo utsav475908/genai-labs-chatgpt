@@ -3,6 +3,7 @@ import type { LabConfig, ShowcaseConfig, UrlMode } from "./types";
 type Json = Record<string, unknown>;
 
 const DEFAULT_FRONTEND_PORT = 3000;
+const MIN_REFRESH_SECONDS = 5;
 const LAB_ID = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/;
 
 class ConfigError extends Error {}
@@ -21,6 +22,19 @@ function requireString(obj: Json, key: string, where: string): string {
 
 function optionalString(obj: Json, key: string, fallback: string): string {
   return typeof obj[key] === "string" ? (obj[key] as string) : fallback;
+}
+
+/** An override may be omitted, but when present it must be a usable value. */
+function optionalOverride(obj: Json, key: string, where: string, fallback: string): string {
+  return obj[key] === undefined ? fallback : requireString(obj, key, where);
+}
+
+function parseRefreshSeconds(value: unknown): number {
+  if (value === undefined || value === 0) return 0;
+  if (typeof value !== "number" || !Number.isFinite(value) || value < MIN_REFRESH_SECONDS) {
+    throw new ConfigError(`refreshSeconds must be 0 (off) or at least ${MIN_REFRESH_SECONDS}`);
+  }
+  return value;
 }
 
 function requirePort(obj: Json, key: string, where: string, fallback?: number): number {
@@ -58,8 +72,8 @@ function parseLab(raw: unknown, index: number, mode: UrlMode, location: Location
     backendPort,
     frontendPort,
     healthPath: optionalString(raw, "healthPath", "/"),
-    frontendUrl: optionalString(raw, "frontendUrl", derived.frontendUrl).replace(/\/+$/, ""),
-    apiUrl: optionalString(raw, "apiUrl", derived.apiUrl).replace(/\/+$/, ""),
+    frontendUrl: optionalOverride(raw, "frontendUrl", where, derived.frontendUrl).replace(/\/+$/, ""),
+    apiUrl: optionalOverride(raw, "apiUrl", where, derived.apiUrl).replace(/\/+$/, ""),
   };
 }
 
@@ -81,7 +95,7 @@ export function parseConfig(raw: unknown, location: Location = window.location):
 
   return {
     title: optionalString(raw, "title", "Labs"),
-    refreshSeconds: typeof raw.refreshSeconds === "number" ? raw.refreshSeconds : 0,
+    refreshSeconds: parseRefreshSeconds(raw.refreshSeconds),
     labs,
   };
 }

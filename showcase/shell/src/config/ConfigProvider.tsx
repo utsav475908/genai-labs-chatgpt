@@ -28,11 +28,17 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
+    let latestRequest = 0;
 
-    const load = () =>
+    // Only the most recently started request may update state, so a slow
+    // response can't overwrite a newer config.
+    const load = () => {
+      const request = ++latestRequest;
+      const isCurrent = () => !cancelled && request === latestRequest;
       fetchConfig()
-        .then((config) => !cancelled && setState({ config, error: null }))
-        .catch((err: Error) => !cancelled && setState((prev) => ({ ...prev, error: err.message })));
+        .then((config) => isCurrent() && setState({ config, error: null }))
+        .catch((err: Error) => isCurrent() && setState((prev) => ({ ...prev, error: err.message })));
+    };
 
     load();
     const timer = refreshSeconds > 0 ? window.setInterval(load, refreshSeconds * 1000) : undefined;

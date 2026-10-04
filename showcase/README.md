@@ -38,7 +38,7 @@ up in the open page without a rebuild.
 ```jsonc
 {
   "title": "GenAI Labs",
-  "refreshSeconds": 30,                 // 0 turns off live reload
+  "refreshSeconds": 30,                 // 0 turns off live reload; otherwise at least 5
   "labs": [                             // array order = presentation order
     {
       "id": "v10",                      // URL slug and subdomain: lowercase, digits, dashes
@@ -49,7 +49,8 @@ up in the open page without a rebuild.
       "backendPort": 8010,
       "frontendPort": 3010,             // default 3000; only used for local development
       "enabled": true,                  // default true; false hides the lab
-      "healthPath": "/"                 // default "/"
+      "healthPath": "/",                // default "/"
+      "persist": ["genai_labs.db"]      // deployment: SQLite files kept on the server across redeploys
     }
   ]
 }
@@ -87,15 +88,17 @@ can't run Docker or long-running Python servers.
 3. **Code and secrets**:
    ```bash
    git clone https://github.com/utsav475908/genai-labs-chatgpt.git && cd genai-labs-chatgpt
-   cp .env.example .env && nano .env    # OPENAI_API_KEY, JWT_SECRET, DOMAIN, ACME_EMAIL
+   cp .env.example .env && nano .env    # OPENAI_API_KEY, JWT_SECRET, DOMAIN, ACME_EMAIL, SHOWCASE_ACCESS_KEY
    chmod 600 .env
    ```
 4. **Deploy**:
    ```bash
    ./showcase/deploy/deploy.sh
    ```
-   Open `https://DOMAIN`. Caddy gets a free HTTPS certificate per subdomain the first time each
-   is visited.
+   Open `https://DOMAIN/unlock?key=<SHOWCASE_ACCESS_KEY>` once; it sets a cookie for the
+   showcase and every lab, then sends you to `https://DOMAIN`. Share that link with your audience.
+   Without it every page and API returns 401, so nobody else can spend your OpenAI quota.
+   Caddy gets a free HTTPS certificate per subdomain the first time each is visited.
 
 `deploy.sh` regenerates `showcase/deploy/generated/` (Compose file, Caddyfile and combined
 `requirements.txt`) from `labs.json`, builds one shared Python image for all backends plus one web
@@ -105,8 +108,9 @@ pulling new code. The first build compiles 21 Next.js apps and takes a while.
 **Sizing:** 21 backends use roughly 2–3 GB of RAM in total. On a small VPS, set `"enabled": false`
 on labs you don't need and re-run `deploy.sh`.
 
-**Data:** labs that use SQLite (v7–v11, v19) keep their database inside the container, so it
-resets when the container is recreated. Mount a volume for those files if the data must persist.
+**Data:** labs with `persist` in labs.json (v7–v11, v19 use SQLite) keep those files on the server
+in `showcase/deploy/data/<id>/`, so conversations and accounts survive redeploys. The database
+files committed in the repo are never copied into the image; deployment starts with empty ones.
 
 ## Files
 

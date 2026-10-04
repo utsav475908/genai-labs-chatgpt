@@ -3,7 +3,8 @@
 
     python3 showcase/deploy/render.py
 
-Writes showcase/deploy/generated/{docker-compose.yml,Caddyfile,requirements.txt}.
+Writes showcase/deploy/generated/{docker-compose.yml,Caddyfile,requirements.txt} and creates
+the host files under showcase/deploy/data/ that hold each lab's persisted SQLite data.
 labs.json stays the only file you edit; everything here is derived from it.
 """
 
@@ -14,9 +15,12 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 LABS_FILE = REPO / "showcase" / "config" / "labs.json"
-OUT_DIR = Path(__file__).resolve().parent / "generated"
+DEPLOY_DIR = Path(__file__).resolve().parent
+OUT_DIR = DEPLOY_DIR / "generated"
+DATA_DIR = DEPLOY_DIR / "data"
 API_IMAGE = "genai-labs-api:latest"
 LAB_ID = re.compile(r"^[a-z0-9]([a-z0-9-]*[a-z0-9])?$")
+PERSIST_FILE = re.compile(r"^[A-Za-z0-9_.-]+$")
 
 
 class ConfigError(Exception):
@@ -40,6 +44,9 @@ def load_labs() -> list[dict]:
             raise ConfigError(f"{lab_id}: no main.py in {backend_dir(lab).relative_to(REPO)}")
         if not (REPO / lab["dir"] / "frontend" / "package.json").is_file():
             raise ConfigError(f"{lab_id}: no frontend/package.json in {lab['dir']}")
+        for name in lab.get("persist", []):
+            if not isinstance(name, str) or not PERSIST_FILE.match(name) or name.startswith("."):
+                raise ConfigError(f"{lab_id}: persist entry {name!r} must be a plain file name")
     return labs
 
 
@@ -49,6 +56,16 @@ def backend_dir(lab: dict) -> Path:
 
 def upstream(lab: dict) -> str:
     return f"api-{lab['id']}:{lab['backendPort']}"
+
+
+def ensure_data_files(labs: list[dict]) -> None:
+    """Bind-mounting a missing host file would create a directory, so create the files first.
+    An empty file is a valid empty SQLite database; each lab's init_db() creates its tables."""
+    for lab in labs:
+        for name in lab.get("persist", []):
+            path = DATA_DIR / lab["id"] / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.touch(exist_ok=True)
 
 
 def render_compose(labs: list[dict]) -> str:
@@ -65,6 +82,7 @@ def render_compose(labs: list[dict]) -> str:
         "    environment:",
         "      DOMAIN: ${DOMAIN:?set DOMAIN in .env}",
         "      ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL in .env}",
+        "      SHOWCASE_ACCESS_KEY: ${SHOWCASE_ACCESS_KEY:?set SHOWCASE_ACCESS_KEY in .env}",
         "    volumes:",
         "      - ./Caddyfile:/etc/caddy/Caddyfile:ro",
         "      # Mounted live: edits to labs.json show up in the open UI without a redeploy.",
@@ -83,25 +101,31 @@ def render_compose(labs: list[dict]) -> str:
             f"    command: uvicorn main:app --host 0.0.0.0 --port {lab['backendPort']}",
             "    env_file: ../../../.env",
         ]
+        if lab.get("persist"):
+            lines.append("    volumes:")
+            lines += [f"      - ../data/{lab['id']}/{name}:{workdir}/{name}" for name in lab["persist"]]
     lines += ["volumes:", "  caddy_data:", "  caddy_config:"]
     return "\n".join(lines) + "\n"
 
 
 def render_caddyfile(labs: list[dict]) -> str:
     shell_api_routes = "".join(
-        f"\thandle_path /api/{lab['id']}/* {{\n\t\treverse_proxy {upstream(lab)}\n\t}}\n" for lab in labs
+        f"\t\thandle_path /api/{lab['id']}/* {{\n\t\t\treverse_proxy {upstream(lab)}\n\t\t}}\n" for lab in labs
     )
     lab_sites = "".join(
         f"""
 {lab['id']}.{{$DOMAIN}} {{
 \tencode gzip
-\thandle_path /api/* {{
-\t\treverse_proxy {upstream(lab)}
-\t}}
-\thandle {{
-\t\troot * /srv/labs/{lab['id']}
-\t\ttry_files {{path}} {{path}}/index.html /index.html
-\t\tfile_server
+\troute {{
+\t\timport access_gate
+\t\thandle_path /api/* {{
+\t\t\treverse_proxy {upstream(lab)}
+\t\t}}
+\t\thandle {{
+\t\t\troot * /srv/labs/{lab['id']}
+\t\t\ttry_files {{path}} {{path}}/index.html /index.html
+\t\t\tfile_server
+\t\t}}
 \t}}
 }}
 """
@@ -112,18 +136,34 @@ def render_caddyfile(labs: list[dict]) -> str:
 \temail {{$ACME_EMAIL}}
 }}
 
+# Every request needs the access cookie, so strangers can't spend the OpenAI quota.
+# Visiting https://DOMAIN/unlock?key=<SHOWCASE_ACCESS_KEY> once sets it for DOMAIN and all lab subdomains.
+(access_gate) {{
+\t@unlock {{
+\t\tpath /unlock
+\t\tquery key={{$SHOWCASE_ACCESS_KEY}}
+\t}}
+\theader @unlock Set-Cookie "showcase_access={{$SHOWCASE_ACCESS_KEY}}; Domain={{$DOMAIN}}; Path=/; Max-Age=2592000; Secure; HttpOnly; SameSite=Lax"
+\tredir @unlock / 302
+\t@locked not header Cookie *showcase_access={{$SHOWCASE_ACCESS_KEY}}*
+\trespond @locked "Access key required: open https://{{$DOMAIN}}/unlock?key=YOUR_KEY" 401
+}}
+
 # Showcase shell
 {{$DOMAIN}} {{
 \tencode gzip
-\thandle /labs.json {{
-\t\troot * /srv/config
-\t\theader Cache-Control no-store
-\t\tfile_server
-\t}}
-{shell_api_routes}\thandle {{
-\t\troot * /srv/shell
-\t\ttry_files {{path}} /index.html
-\t\tfile_server
+\troute {{
+\t\timport access_gate
+\t\thandle /labs.json {{
+\t\t\troot * /srv/config
+\t\t\theader Cache-Control no-store
+\t\t\tfile_server
+\t\t}}
+{shell_api_routes}\t\thandle {{
+\t\t\troot * /srv/shell
+\t\t\ttry_files {{path}} /index.html
+\t\t\tfile_server
+\t\t}}
 \t}}
 }}
 
@@ -154,6 +194,7 @@ def main() -> int:
         return 1
 
     OUT_DIR.mkdir(exist_ok=True)
+    ensure_data_files(labs)
     (OUT_DIR / "docker-compose.yml").write_text(render_compose(labs))
     (OUT_DIR / "Caddyfile").write_text(render_caddyfile(labs))
     (OUT_DIR / "requirements.txt").write_text(render_requirements(labs))

@@ -50,14 +50,16 @@
       "name": "Persistent Memory",
       "description": "Conversations and long-term memories stored in SQLite.",
       "dir": "chatbot-v7-database-persistent-memory",
-      "backendPort": 8007
+      "backendPort": 8007,
+      "persist": ["genai_labs.db"]
     },
     {
       "id": "v8",
       "name": "Users & Auth",
       "description": "Multi-user chat with registration, login and per-user memory.",
       "dir": "chatbot-v8-database-with-users",
-      "backendPort": 8008
+      "backendPort": 8008,
+      "persist": ["genai_labs.db"]
     },
     {
       "id": "v9",
@@ -65,7 +67,8 @@
       "description": "Richer interactive chat UI with uploads and realtime voice.",
       "dir": "chatbot-v9-vitual-interactive",
       "backendPort": 8009,
-      "frontendPort": 3009
+      "frontendPort": 3009,
+      "persist": ["genai_labs.db"]
     },
     {
       "id": "v10",
@@ -73,7 +76,8 @@
       "description": "Advanced retrieval-augmented generation with model comparison.",
       "dir": "chatbot-v10-Advanced-RAG-Lab",
       "backendPort": 8010,
-      "frontendPort": 3010
+      "frontendPort": 3010,
+      "persist": ["genai_labs.db"]
     },
     {
       "id": "v11",
@@ -81,7 +85,8 @@
       "description": "Knowledge bases, model comparison and RAG experiments.",
       "dir": "chatbot-v11-AI-Model-Playground",
       "backendPort": 8011,
-      "frontendPort": 3011
+      "frontendPort": 3011,
+      "persist": ["genai_labs.db"]
     },
     {
       "id": "v12",
@@ -145,7 +150,8 @@
       "description": "Track token usage and cost per model over time.",
       "dir": "chatbot-v19-AIUsage-CostDashboard",
       "backendPort": 8019,
-      "frontendPort": 3019
+      "frontendPort": 3019,
+      "persist": ["usage.db"]
     },
     {
       "id": "v20",

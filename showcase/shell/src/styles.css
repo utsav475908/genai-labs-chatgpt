@@ -42,7 +42,7 @@ body { margin: 0; }
 .banner { background: #fff3bf; color: #5c4400; padding: 8px 16px; }
 
 .badge { font-size: 12px; font-weight: 500; padding: 2px 8px; border-radius: 999px; background: var(--border); }
-.badge-up { background: var(--ok); color: white; }
+.badge-up, .badge-reachable { background: var(--ok); color: white; }
 .badge-down { background: var(--bad); color: white; }
 
 .pager { display: flex; gap: 16px; }

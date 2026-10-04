@@ -9,6 +9,8 @@
 **/.next
 **/frontend
 **/__pycache__
+# Runtime SQLite data stays on the server (see "persist" in labs.json), never in the image.
+**/*.db
 **/.DS_Store
 **/venv
 **/.venv
