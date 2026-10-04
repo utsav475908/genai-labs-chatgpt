@@ -1,0 +1,167 @@
+{
+  "title": "GenAI Labs",
+  "refreshSeconds": 30,
+  "labs": [
+    {
+      "id": "v1",
+      "name": "Text Responses",
+      "description": "Basic chat: one prompt in, one model response out.",
+      "dir": "chatbot-v1-text-responses",
+      "backendDir": ".",
+      "backendPort": 8000
+    },
+    {
+      "id": "v2",
+      "name": "Streaming",
+      "description": "Token-by-token streaming responses.",
+      "dir": "chatbot-v2-Streaming",
+      "backendPort": 8000
+    },
+    {
+      "id": "v3",
+      "name": "Web Search",
+      "description": "Answers grounded in live web search results.",
+      "dir": "chatbot-v3-Web-Search",
+      "backendPort": 8000
+    },
+    {
+      "id": "v4",
+      "name": "File Uploads & Search",
+      "description": "Upload documents and ask questions about them (file search / RAG).",
+      "dir": "chatbot-v4-file-uploads-search",
+      "backendPort": 8000
+    },
+    {
+      "id": "v5",
+      "name": "Image Recognition",
+      "description": "Upload images and documents; the model describes and reasons over them.",
+      "dir": "chatbot-v5-upload-image-recognition",
+      "backendPort": 8000
+    },
+    {
+      "id": "v6",
+      "name": "Voice Conversation",
+      "description": "Realtime voice chat plus image and document uploads.",
+      "dir": "chatbot-v6-voice-conversation",
+      "backendPort": 8006
+    },
+    {
+      "id": "v7",
+      "name": "Persistent Memory",
+      "description": "Conversations and long-term memories stored in SQLite.",
+      "dir": "chatbot-v7-database-persistent-memory",
+      "backendPort": 8007
+    },
+    {
+      "id": "v8",
+      "name": "Users & Auth",
+      "description": "Multi-user chat with registration, login and per-user memory.",
+      "dir": "chatbot-v8-database-with-users",
+      "backendPort": 8008
+    },
+    {
+      "id": "v9",
+      "name": "Visual & Interactive",
+      "description": "Richer interactive chat UI with uploads and realtime voice.",
+      "dir": "chatbot-v9-vitual-interactive",
+      "backendPort": 8009,
+      "frontendPort": 3009
+    },
+    {
+      "id": "v10",
+      "name": "Advanced RAG Lab",
+      "description": "Advanced retrieval-augmented generation with model comparison.",
+      "dir": "chatbot-v10-Advanced-RAG-Lab",
+      "backendPort": 8010,
+      "frontendPort": 3010
+    },
+    {
+      "id": "v11",
+      "name": "AI Model Playground",
+      "description": "Knowledge bases, model comparison and RAG experiments.",
+      "dir": "chatbot-v11-AI-Model-Playground",
+      "backendPort": 8011,
+      "frontendPort": 3011
+    },
+    {
+      "id": "v12",
+      "name": "Multimodal AI Lab",
+      "description": "Cross-modal experiments across text, images and documents.",
+      "dir": "chatbot-v12-Multimodal-AI-Lab",
+      "backendPort": 8012,
+      "frontendPort": 3012
+    },
+    {
+      "id": "v13",
+      "name": "Data Analysis",
+      "description": "Upload data files and analyze them with a code interpreter.",
+      "dir": "chatbot-v13-DataAnalysis-CodeInterpreter",
+      "backendPort": 8013,
+      "frontendPort": 3013
+    },
+    {
+      "id": "v14",
+      "name": "Image Generation",
+      "description": "Generate, edit and describe images; prompt enhancement.",
+      "dir": "chatbot-v14-Image-Generation",
+      "backendPort": 8014,
+      "frontendPort": 3014
+    },
+    {
+      "id": "v15",
+      "name": "Document Generation",
+      "description": "Generate Word and PDF documents from templates and prompts.",
+      "dir": "chatbot-v15-Document-Generation",
+      "backendPort": 8015,
+      "frontendPort": 3015
+    },
+    {
+      "id": "v16",
+      "name": "Speech & Transcription",
+      "description": "Transcription, text-to-speech, translation and transcript analysis.",
+      "dir": "chatbot-v16-Speech-Transcription",
+      "backendPort": 8016,
+      "frontendPort": 3016
+    },
+    {
+      "id": "v17",
+      "name": "AI Coding Assistant",
+      "description": "Generate, explain and review code; analyze uploaded files.",
+      "dir": "chatbot-v17-AI-Coding-Assistant",
+      "backendPort": 8017,
+      "frontendPort": 3017
+    },
+    {
+      "id": "v18",
+      "name": "AI Security Analysis",
+      "description": "Secret scanning, vulnerability review, threat modeling, prompt-injection checks.",
+      "dir": "chatbot-v18-AI-Security-analysis",
+      "backendPort": 8018,
+      "frontendPort": 3018
+    },
+    {
+      "id": "v19",
+      "name": "AI Usage & Cost Dashboard",
+      "description": "Track token usage and cost per model over time.",
+      "dir": "chatbot-v19-AIUsage-CostDashboard",
+      "backendPort": 8019,
+      "frontendPort": 3019
+    },
+    {
+      "id": "v20",
+      "name": "Kubernetes Lab",
+      "description": "Kubernetes concepts and YAML generation.",
+      "dir": "GenAI-Labs-V20-Kubernetes-Local",
+      "backendPort": 8020,
+      "frontendPort": 3020
+    },
+    {
+      "id": "v21",
+      "name": "Robotics + GenAI",
+      "description": "Robot planning, validation, vision and ROS 2 concepts.",
+      "dir": "GenAI-Labs-V21-Robotics-GenAI-CLEAN",
+      "backendPort": 8021,
+      "frontendPort": 3021
+    }
+  ]
+}

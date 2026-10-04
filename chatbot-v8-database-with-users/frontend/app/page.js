@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const BACKEND = "http://localhost:8008";
+const BACKEND = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8008";
 
 export default function Home() {
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const BACKEND = "http://localhost:8012";
+const BACKEND = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8012";
 
 const MODES = [
   { id: "cross_modal", icon: "🔀", title: "Cross-Modal Reasoning", desc: "Compare images, documents and questions together." },

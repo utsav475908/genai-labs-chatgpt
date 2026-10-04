@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const BACKEND = "http://localhost:8015";
+const BACKEND = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8015";
 
 const MODES = {
   writer: {

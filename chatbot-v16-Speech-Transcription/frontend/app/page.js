@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 
-const BACKEND = "http://localhost:8016";
+const BACKEND = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8016";
 
 const MODES = {
   record: {

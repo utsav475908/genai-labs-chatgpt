@@ -1,7 +1,7 @@
 "use client";
 import {useState} from "react";
 
-const API="http://localhost:8021";
+const API=process.env.NEXT_PUBLIC_API_URL||"http://localhost:8021";
 const items=[["🤖","Dashboard"],["🧠","AI Assistant"],["👁️","Vision"],["🎯","Object Detection"],["🧭","Navigation"],["🦾","Robot Arm"],["🚁","Drone"],["📡","Telemetry"],["🧩","ROS 2"],["🛡️","Safety"]];
 
 export default function Home(){

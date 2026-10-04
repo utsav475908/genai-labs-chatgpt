@@ -2,17 +2,19 @@
 
 import { useEffect, useRef, useState } from "react";
 
+const BACKEND = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8006";
+
 const API_URL =
-    "http://localhost:8006/chat";
+    `${BACKEND}/chat`;
 
 const IMAGE_UPLOAD_URL =
-    "http://localhost:8006/upload-image";
+    `${BACKEND}/upload-image`;
 
 const DOCUMENT_UPLOAD_URL =
-    "http://localhost:8006/upload";
+    `${BACKEND}/upload`;
 
 const REALTIME_TOKEN_URL =
-    "http://localhost:8006/realtime-token";
+    `${BACKEND}/realtime-token`;
 
 
 export default function Home() {
