@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const BACKEND = "http://localhost:8019";
+const BACKEND = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8019";
 
 const MODELS = [
   "gpt-6-astra",

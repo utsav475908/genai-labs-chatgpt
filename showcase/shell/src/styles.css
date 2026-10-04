@@ -1,0 +1,56 @@
+:root {
+  --bg: #f7f7f8;
+  --panel: #ffffff;
+  --text: #1d1d1f;
+  --muted: #6b6b75;
+  --border: #e3e3e8;
+  --accent: #3b5bdb;
+  --ok: #2f9e44;
+  --bad: #e03131;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141417;
+    --panel: #1d1d22;
+    --text: #ececf1;
+    --muted: #9a9aa5;
+    --border: #2e2e36;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+
+.layout { display: grid; grid-template-columns: 240px 1fr; height: 100vh; }
+.sidebar { border-right: 1px solid var(--border); padding: 16px; background: var(--panel); overflow-y: auto; }
+.sidebar h1 { font-size: 18px; margin: 0 0 12px; }
+.sidebar ol { padding-left: 24px; margin: 0; }
+.sidebar li { margin: 6px 0; }
+.sidebar a { color: var(--text); text-decoration: none; }
+.sidebar a.active { color: var(--accent); font-weight: 600; }
+
+.content { display: flex; flex-direction: column; min-width: 0; padding: 16px 24px; gap: 12px; }
+.lab-header { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.lab-header h2 { margin: 2px 0; display: flex; gap: 8px; align-items: center; }
+.lab-header p { margin: 2px 0; }
+.lab-frame { flex: 1; width: 100%; min-height: 480px; border: 1px solid var(--border); border-radius: 8px; background: white; }
+
+.muted { color: var(--muted); }
+.center { display: grid; place-items: center; min-height: 50vh; }
+.banner { background: #fff3bf; color: #5c4400; padding: 8px 16px; }
+
+.badge { font-size: 12px; font-weight: 500; padding: 2px 8px; border-radius: 999px; background: var(--border); }
+.badge-up, .badge-reachable { background: var(--ok); color: white; }
+.badge-down { background: var(--bad); color: white; }
+
+.pager { display: flex; gap: 16px; }
+.pager a { color: var(--accent); }
+
+@media (max-width: 720px) {
+  .layout { grid-template-columns: 1fr; height: auto; }
+  .sidebar { border-right: 0; border-bottom: 1px solid var(--border); }
+  .content { padding: 16px; }
+  .lab-frame { min-height: 70vh; }
+}

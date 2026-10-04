@@ -11,3 +11,9 @@ node_modules/
 .venv/
 __pycache__/
 *.pyc
+
+# Showcase build outputs
+showcase/deploy/generated/
+showcase/deploy/data/
+showcase/shell/dist/
+*.tsbuildinfo
